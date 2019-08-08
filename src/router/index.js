@@ -80,6 +80,22 @@ export const asyncRouterMap = [
       }
     ]
   },
+  {
+    path: '/music_score',
+    component: Layout,
+    redirect: '/music_score/music_score',
+    name: 'music_score',
+    meta: { title: '乐谱管理', icon: 'music' },
+    children: [
+      {
+        path: 'music_score',
+        name: 'music_score',
+        component: () => import('@/views/music_score/music_score/music_score'),
+        meta: { title: '乐谱管理', icon: 'music_score' },
+        menu: 'music_score'
+      }
+    ]
+  },
   { path: '*', redirect: '/404', hidden: true }
 ]
 

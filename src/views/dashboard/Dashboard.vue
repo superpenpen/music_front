@@ -1,10 +1,11 @@
 <template>
   <div class="dashboard-container">
-    <div class="dashboard-text">userId: {{ userId }}</div>
+    <h1>欢迎进入该平台</h1>
+    <!-- <div class="dashboard-text">userId: {{ userId }}</div>
     <div class="dashboard-text">userName: {{ userName }}</div>
     <div class="dashboard-text">roleId: {{ roleId }}</div>
     <div class="dashboard-text">roleName: {{ roleName }}</div>
-    <div class="dashboard-text">permissions: {{ permissions }}</div>
+    <div class="dashboard-text">permissions: {{ permissions }}</div> -->
   </div>
 </template>
 
