@@ -4,8 +4,11 @@ export function getMusics(params) {
   return request({
     url: '/music_socre/musics',
     method: 'post',
-    params: params,
-    timeout: 5000
+    data: params,
+    timeout: 5000,
+    headers: {
+      'Content-Type': 'application/json' // hearder 很重要，Content-Type 要写对
+    }
   })
 }
 
@@ -36,6 +39,22 @@ export function deleteMusic(params) {
     url: '/music_socre/delete',
     method: 'post',
     data: params,
+    timeout: 5000
+  })
+}
+
+export function getNames() {
+  return request({
+    url: '/music_socre/names',
+    method: 'get',
+    timeout: 5000
+  })
+}
+
+export function getCountrys() {
+  return request({
+    url: '/music_socre/countrys',
+    method: 'get',
     timeout: 5000
   })
 }

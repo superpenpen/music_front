@@ -48,14 +48,14 @@
           <el-col :span="11">
             <el-form-item label="作者姓名" prop="authorName">
               <el-select v-model="musicForm.authorName" placeholder="请选择" style="padding-right:5px">
-                <el-option v-for="item in authorNames" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                <el-option v-for="item in authorNames" :key="item.authorNameId" :label="item.authorName" :value="item.authorNameId"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="11">
             <el-form-item label="作者国家" prop="authorCountry">
               <el-select v-model="musicForm.authorCountry" placeholder="请选择" style="padding-right:5px">
-                <el-option v-for="item in authorCountrys" :key="item.value" :label="item.country" :value="item.value"></el-option>
+                <el-option v-for="item in authorCountrys" :key="item.authorCountryId" :label="item.authorCountry" :value="item.authorCountryId"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -137,7 +137,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { getMusics, insertMusic, updateMusic, deleteMusic } from '@/api/musics'
+import { getMusics, insertMusic, updateMusic, deleteMusic, getCountrys, getNames } from '@/api/musics'
 
 export default {
   data() {
@@ -186,6 +186,8 @@ export default {
           { required: true, message: '请输入乐谱名称', trigger: 'change' }
         ]
       },
+      authorCountrys: [],
+      authorNames: [],
       musicScopes: [
         { label: '请选择', value: 0 },
         { label: '1-3级', value: 1 },
@@ -252,6 +254,8 @@ export default {
   },
   created() {
     this.getMusics()
+    this.getNames()
+    this.getCountrys()
   },
   computed: {
     ...mapGetters([
@@ -259,16 +263,33 @@ export default {
     ])
   },
   methods: {
+    httpRequest(item) {
+      this.file = item.file
+    },
     getMusics() {
       const params = {
         page: this.page,
-        pageSize: this.pageSize,
-        date: new Date().getTime()
+        size: this.pageSize
+        // date: new Date().getTime()
       }
       getMusics(params).then(res => {
         if (res.code === 1) {
-          this.musics = res.data.musics
+          this.musics = res.data.records
           this.total = res.data.total
+        }
+      })
+    },
+    getNames() {
+      getNames().then(res => {
+        if (res.code === 1) {
+          this.authorNames = res.data
+        }
+      })
+    },
+    getCountrys() {
+      getCountrys().then(res => {
+        if (res.code === 1) {
+          this.authorCountrys = res.data
         }
       })
     },
@@ -301,7 +322,18 @@ export default {
     },
     insertMusic() {
       this.$refs.musicForm.validate((valid) => {
-        insertMusic(this.musicForm).then(res => {
+        const formData = new FormData()
+        formData.append('musicName', this.musicForm.musicName)
+        formData.append('musicScope', this.musicForm.musicScope)
+        formData.append('musicType', this.musicForm.musicType)
+        formData.append('hands', this.musicForm.hands)
+        formData.append('musicCharacter', this.musicForm.musicCharacter)
+        formData.append('musicTime', this.musicForm.musicTime)
+        formData.append('authorKnownDegree', this.musicForm.authorKnownDegree)
+        formData.append('authorCountry', this.musicForm.authorCountry)
+        formData.append('authorName', this.musicForm.authorName)
+        formData.append('file', this.file)
+        insertMusic(formData).then(res => {
           const code = res.code
           const msg = res.msg
           if (code !== 1) {
