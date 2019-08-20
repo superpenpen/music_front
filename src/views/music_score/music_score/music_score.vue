@@ -1,27 +1,116 @@
 <template>
   <div class="app-container music">
     <div class="head filter-container">
-      <el-form>
-        <el-form-item>
-          <el-button class="create-user-button" type="primary" size="small" icon="el-icon-plus" @click="showInsertDialog()">添加</el-button>
-        </el-form-item>
+      <el-form :inline="true" :model="filters">
+        <el-form-item >
+          <el-input size="mini" v-model="filters.deviceName" placeholder="设备名称" @keyup.enter.native="getDevicesBefore"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-input size="mini" v-model="filters.ip" placeholder="IP" @keyup.enter.native="getDevicesBefore"></el-input>
+          </el-form-item>
+          <el-select size="mini" v-model="filters.deviceTypeValue" placeholder="设备类型" style="padding-right:5px;padding-top:5px">
+            <el-option v-for="item in deviceType" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+          <el-select size="mini" v-model="filters.statusValue" placeholder="设备状态" style="padding-right:5px;padding-top:5px">
+            <el-option v-for="item in statusType" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+          <el-form-item  v-show="moreConditions">
+            <el-input size="mini" v-model="filters.cvideogbid" placeholder="国标ID" @keyup.enter.native="getDevicesBefore" ></el-input>
+          </el-form-item>
+          <el-select  v-show="moreConditions" size="mini" v-model="filters.factoryId" placeholder="厂商"  style="padding-right:5px;padding-top:5px">
+            <el-option v-for="item in factorys" :key="item.id" :label="item.factoryName" :value="item.id"></el-option>
+          </el-select>
+          <el-select  v-show="moreConditions" size="mini" v-model="filters.industryId" placeholder="行业编码"  style="padding-right:5px;padding-top:5px">
+            <el-option v-for="item in industrys" :key="item.id" :label="item.industryName" :value="item.id"></el-option>
+          </el-select>
+          <el-select  v-show="moreConditions" size="mini" v-model="filters.zoneId" placeholder="地区编码"  style="padding-right:5px;padding-top:5px">
+            <el-option v-for="item in zones" :key="item.id" :label="item.zoneName" :value="item.id"></el-option>
+          </el-select>
+          <el-select  v-show="moreConditions" size="mini" v-model="filters.levelType" placeholder="设备等级"  style="padding-right:5px;padding-top:5px">
+            <el-option v-for="item in levelTypeSel2" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+          <el-select v-show="moreConditions" size="mini" v-model="filters.protocolType" placeholder="协议类型" style="padding-right:5px;padding-top:5px">
+            <el-option v-for="item in protocolTypeSel2" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+          <el-select v-show="moreConditions" size="mini" v-model="filters.netType"  placeholder="网络类型" style="padding-right:5px;padding-top:5px">
+            <el-option v-for="item in netTypeTypeSel2" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+          <el-select v-show="moreConditions" size="mini" v-model="filters.streamType" placeholder="取流类型" style="padding-right:5px;padding-top:5px">
+            <el-option v-for="item in streamTypeSel2" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+          <el-select v-show="moreConditions" size="mini" v-model="filters.streamProtocol"  placeholder="码流类型" style="padding-right:5px;padding-top:5px">
+            <el-option v-for="item in streamProtocolSel2" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+          <el-select v-show="moreConditions" size="mini" v-model="filters.mediaType" placeholder="媒体类型" style="padding-right:5px;padding-top:5px">
+            <el-option v-for="item in mediaTypeSel2" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+          <el-select v-show="moreConditions" size="mini" v-model="filters.autoRec" placeholder="是否自动录像" style="padding-right:5px;padding-top:5px">
+            <el-option v-for="item in isAutoRec" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+          <el-select v-show="moreConditions" size="mini" v-model="filters.cloudControl" placeholder="是否有云台" style="padding-right:5px;padding-top:5px">
+          <el-option v-for="item in isCloudControl" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+          <el-select v-show="moreConditions" size="mini" v-model="filters.cutflag" placeholder="是否自动截图" style="padding-right:5px;padding-top:5px">
+            <el-option v-for="item in isCutflag" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>     
+          <el-form-item>
+          <el-button size="mini" type="primary" @click="getDevicesBefore" icon="el-icon-search">搜索</el-button>
+          </el-form-item>
+          <el-form-item>
+          <el-button size="mini"  @click="initQuery">重置</el-button>
+          </el-form-item>
+          <span style="padding-top: 5px"  v-show="lessConditions">
+            <el-button size='mini' type='text' icon='el-icon-arrow-down' @click='showMore'>展开</el-button>
+          </span>
+          <span style="padding-top: 5px"  v-show="moreConditions">
+            <el-button size='mini' type='text' icon='el-icon-arrow-up' @click='showLess'>收起</el-button>
+          </span>
       </el-form>
+      <el-row>
+        <el-col :span="24" class="toolbar" style="padding-bottom: 10px;">
+          <el-button size="mini" type="primary" @click.native="showInsertDialog()" icon="el-icon-plus">新增</el-button>
+        </el-col>
+      </el-row>
     </div>
     <div class="body">
       <el-table class="music-table" size="mini" height="100%" border fit 
         :data="musics" :row-style="tableRowStyle" :cell-style="tableCellStyle">
         <el-table-column label="序号" type="index" width="60" align="center"></el-table-column>
+        <!-- <el-table-column label="ID" prop="id" width="60" align="center" ></el-table-column> -->
         <el-table-column label="乐谱名称" prop="musicName" min-width="90" align="center"></el-table-column>
-        <el-table-column label="考级范围" prop="musicScope" min-width="90" align="center"></el-table-column>
-        <el-table-column label="曲子类型" prop="musicType" min-width="150" align="center"></el-table-column>
-        <el-table-column label="弹奏方式" prop="hands" min-width="60" align="center"></el-table-column>
-        <el-table-column label="曲子特性" prop="musicCharacter" min-width="60" align="center"></el-table-column>
-        <el-table-column label="乐谱时期" prop="musicTime" min-width="60" align="center"></el-table-column>
-        <el-table-column label="作者知名程度" prop="authorKnownDegree" min-width="60" align="center"></el-table-column>
-        <el-table-column label="作者国家" prop="authorCountry" min-width="60" align="center"></el-table-column>
-        <el-table-column label="作者姓名" prop="authorName" min-width="60" align="center"></el-table-column>
-        <el-table-column label="乐谱保存路径" prop="filePath" min-width="60" align="center"></el-table-column>
+        <el-table-column label="考级范围" prop="musicScope" min-width="40" align="center">
+          <template slot-scope="scope">{{scope.row.musicScope | formatMusicScope }}</template>
+        </el-table-column>
+        <el-table-column label="曲子类型" prop="musicType" min-width="40" align="center">
+          <template slot-scope="scope">{{scope.row.musicType | formatMusicType }}</template>
+        </el-table-column>
+        <el-table-column label="弹奏方式" prop="hands" min-width="40" align="center">
+          <template slot-scope="scope">{{scope.row.hands | formatHands }}</template>
+        </el-table-column>
+        <el-table-column label="曲子特性" prop="musicCharacter" min-width="60" align="center">
+          <template slot-scope="scope">{{scope.row.musicCharacter | formatMusicCharacter }}</template>
+        </el-table-column>
+        <el-table-column label="乐谱时期" prop="musicTime" min-width="40" align="center">
+          <template slot-scope="scope">{{scope.row.musicTime | formatMusicTime }}</template>
+        </el-table-column>
+        <el-table-column label="作者知名程度" prop="authorKnownDegree" min-width="40" align="center">
+          <template slot-scope="scope">{{scope.row.authorKnownDegree | formatAuthorKnownDegree }}</template>
+        </el-table-column>
+        <el-table-column label="作者国家" prop="authorCountry" min-width="40" align="center">
+        </el-table-column>
+        <el-table-column label="作者姓名" prop="authorName" min-width="40" align="center">
+        </el-table-column>
+        <!-- <el-table-column label="乐谱保存路径" prop="filePath" min-width="60" align="center">
+        </el-table-column> -->
         <el-table-column label="入库时间" prop="createTime" min-width="60" align="center"></el-table-column>
+        <el-table-column label="操作" min-width="80" align="center">
+          <template slot-scope="scope">
+            <div>
+              <!-- <el-button type="primary" size="small" @click="showUpdateDialog(scope.$index)">修改</el-button> -->
+              <el-button type="danger" size="small" @click="deleteMusic(scope.$index, scope.row)">删除</el-button>
+            </div>
+          </template>
+        </el-table-column>
       </el-table>
     </div>
     <div class="footer">
@@ -36,25 +125,18 @@
 
     <!--添加/编辑用户对话框-->
 		<el-dialog class="music-dialog" :title="titleMap[dialogType]" :visible.sync="showDialog" :close-on-click-modal="false" :before-close="handleClose">
-			<el-form ref="musicForm" label-position="right" label-width="100px" :model="musicForm" :rules="musicFormRules">
-        <el-row>
-          <el-col :span="15">
-            <el-form-item label="乐谱名称" prop="musicName">
-              <el-input type="text" v-model="musicForm.musicName"></el-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
+			<el-form ref="musicForm" label-position="right" label-width="100px" :model="musicForm">
         <el-row>
           <el-col :span="11">
             <el-form-item label="作者姓名" prop="authorName">
-              <el-select v-model="musicForm.authorName" placeholder="请选择" style="padding-right:5px">
+              <el-select v-model="musicForm.authorNameId" placeholder="请选择" filterable style="padding-right:5px">
                 <el-option v-for="item in authorNames" :key="item.authorNameId" :label="item.authorName" :value="item.authorNameId"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="11">
             <el-form-item label="作者国家" prop="authorCountry">
-              <el-select v-model="musicForm.authorCountry" placeholder="请选择" style="padding-right:5px">
+              <el-select v-model="musicForm.authorCountryId" placeholder="请选择" filterable style="padding-right:5px">
                 <el-option v-for="item in authorCountrys" :key="item.authorCountryId" :label="item.authorCountry" :value="item.authorCountryId"></el-option>
               </el-select>
             </el-form-item>
@@ -142,6 +224,9 @@ import { getMusics, insertMusic, updateMusic, deleteMusic, getCountrys, getNames
 export default {
   data() {
     return {
+      moreConditions: false,
+      lessConditions: true,
+
       // table
       musics: [],
       page: 1,
@@ -163,15 +248,16 @@ export default {
 
       // form
       musicForm: {
+        id: '',
         musicName: '',
         musicScope: '',
         musicType: '',
         hands: '',
-        musicCharacter: '',
+        musicCharacter: [],
         musicTime: '',
         authorKnownDegree: '',
-        authorCountry: '',
-        authorName: '',
+        authorCountryId: '',
+        authorNameId: '',
         filePath: ''
       },
       selectLimit: 10,
@@ -180,12 +266,6 @@ export default {
       file: null,
       fileList: [],
 
-      // rules
-      musicFormRules: {
-        musicName: [
-          { required: true, message: '请输入乐谱名称', trigger: 'change' }
-        ]
-      },
       authorCountrys: [],
       authorNames: [],
       musicScopes: [
@@ -216,7 +296,10 @@ export default {
         { label: '复调作品', value: 16 },
         { label: '双钢', value: 17 },
         { label: '四手联弹', value: 18 },
-        { label: '前奏曲', value: 19 }
+        { label: '前奏曲', value: 19 },
+        { label: '间奏曲', value: 20 },
+        { label: '全集', value: 21 },
+        { label: '舞曲', value: 22 }
       ],
       hands: [
         { label: '请选择', value: 0 },
@@ -225,16 +308,18 @@ export default {
         { label: '均衡', value: 3 }
       ],
       musicCharacters: [
-        { label: '请选择', value: 0 },
-        { label: '快速跑动', value: 1 },
-        { label: '八度', value: 2 },
-        { label: '双音', value: 3 },
-        { label: '附点', value: 4 },
-        { label: '三连音', value: 5 },
-        { label: '和弦', value: 6 },
-        { label: '断奏', value: 7 },
-        { label: '三六度', value: 8 },
-        { label: '其他', value: 9 }
+        { label: '快速跑动', value: 'a' },
+        { label: '八度', value: 'b' },
+        { label: '双音', value: 'c' },
+        { label: '附点', value: 'd' },
+        { label: '三连音', value: 'e' },
+        { label: '和弦', value: 'f' },
+        { label: '断奏', value: 'g' },
+        { label: '三六度', value: 'h' },
+        { label: '快速', value: 'i' },
+        { label: '慢速', value: 'j' },
+        { label: '中速', value: 'k' },
+        { label: '双手交替', value: 'l' }
       ],
       musicTimes: [
         { label: '请选择', value: 0 },
@@ -242,7 +327,8 @@ export default {
         { label: '古典', value: 2 },
         { label: '浪漫', value: 3 },
         { label: '印象', value: 4 },
-        { label: '现代', value: 5 }
+        { label: '现代', value: 5 },
+        { label: '流行', value: 6 }
       ],
       authorKnownDegrees: [
         { label: '请选择', value: 0 },
@@ -257,12 +343,130 @@ export default {
     this.getNames()
     this.getCountrys()
   },
+  filters: {
+    formatMusicScope(musicScope) {
+      const musicScopeMap = {
+        1: '1-3级',
+        2: '4-6级',
+        3: '7-9级',
+        4: '10级',
+        5: '演奏'
+      }
+      return musicScopeMap[musicScope]
+    },
+    formatMusicType(musicType) {
+      const musicTypeMap = {
+        0: '',
+        1: '音阶琶音',
+        2: '练习曲',
+        3: '即兴曲',
+        4: '协奏曲',
+        5: '幻想曲',
+        6: '奏鸣曲',
+        7: '谐谑曲',
+        8: '夜曲',
+        9: '狂想曲',
+        10: '圆舞曲',
+        11: '组曲（标题音乐）',
+        12: '改编曲',
+        13: '浪漫曲',
+        14: '船歌',
+        15: '室内乐',
+        16: '复调作品',
+        17: '双钢',
+        18: '四手联弹',
+        19: '前奏曲',
+        20: '间奏曲',
+        21: '全集',
+        22: '舞曲'
+      }
+      return musicTypeMap[musicType]
+    },
+    formatHands(hands) {
+      const handsMap = {
+        0: '',
+        1: '左手',
+        2: '右手',
+        3: '均衡'
+      }
+      return handsMap[hands]
+    },
+    formatMusicTime(musicTimes) {
+      const musicTimesMap = {
+        0: '',
+        1: '巴洛克',
+        2: '古典',
+        3: '浪漫',
+        4: '印象',
+        5: '现代',
+        6: '流行'
+      }
+      return musicTimesMap[musicTimes]
+    },
+    formatAuthorKnownDegree(authorKnownDegrees) {
+      const authorKnownDegreesMap = {
+        0: '',
+        1: '极其知名',
+        2: '知名',
+        3: '小众'
+      }
+      return authorKnownDegreesMap[authorKnownDegrees]
+    },
+    formatMusicCharacter(character) {
+      var returnData = ''
+      if (character.indexOf('a') >= 0) {
+        returnData = returnData + '快速跑动、'
+      }
+      if (character.indexOf('b') >= 0) {
+        returnData = returnData + '八度、'
+      }
+      if (character.indexOf('c') >= 0) {
+        returnData = returnData + '双音、'
+      }
+      if (character.indexOf('d') >= 0) {
+        returnData = returnData + '附点、'
+      }
+      if (character.indexOf('e') >= 0) {
+        returnData = returnData + '三连音、'
+      }
+      if (character.indexOf('f') >= 0) {
+        returnData = returnData + '和弦、'
+      }
+      if (character.indexOf('g') >= 0) {
+        returnData = returnData + '断奏、'
+      }
+      if (character.indexOf('h') >= 0) {
+        returnData = returnData + '三六度、'
+      }
+      if (character.indexOf('i') >= 0) {
+        returnData = returnData + '快速'
+      }
+      if (character.indexOf('j') >= 0) {
+        returnData = returnData + '慢速'
+      }
+      if (character.indexOf('k') >= 0) {
+        returnData = returnData + '中速'
+      }
+      if (character.indexOf('l') >= 0) {
+        returnData = returnData + '双手交替'
+      }
+      return returnData
+    }
+  },
   computed: {
     ...mapGetters([
       'userId'
     ])
   },
   methods: {
+    showMore() {
+      this.moreConditions = true
+      this.lessConditions = false
+    },
+    showLess() {
+      this.moreConditions = false
+      this.lessConditions = true
+    },
     httpRequest(item) {
       this.file = item.file
     },
@@ -299,11 +503,11 @@ export default {
       this.musicForm.musicScope = 0
       this.musicForm.musicType = 0
       this.musicForm.hands = 0
-      this.musicForm.musicCharacter = ''
+      this.musicForm.musicCharacter = []
       this.musicForm.musicTime = 0
       this.musicForm.authorKnownDegree = 0
-      this.musicForm.authorCountry = 0
-      this.musicForm.authorName = 0
+      this.musicForm.authorCountryId = 0
+      this.musicForm.authorNameId = 0
       this.musicForm.filePath = ''
     },
     showInsertDialog() {
@@ -311,27 +515,28 @@ export default {
       this.musicForm.musicScope = 0
       this.musicForm.musicType = 0
       this.musicForm.hands = 0
-      this.musicForm.musicCharacter = ''
+      this.musicForm.musicCharacter = []
       this.musicForm.musicTime = 0
       this.musicForm.authorKnownDegree = 0
-      this.musicForm.authorCountry = 0
-      this.musicForm.authorName = 0
+      this.musicForm.authorCountryId = 1
+      this.musicForm.authorNameId = 1
       this.musicForm.filePath = ''
       this.dialogType = 'insert'
       this.showDialog = true
     },
     insertMusic() {
+      console.log('--------->' + this.musicForm.musicCharacter.toString())
       this.$refs.musicForm.validate((valid) => {
         const formData = new FormData()
         formData.append('musicName', this.musicForm.musicName)
         formData.append('musicScope', this.musicForm.musicScope)
         formData.append('musicType', this.musicForm.musicType)
         formData.append('hands', this.musicForm.hands)
-        formData.append('musicCharacter', this.musicForm.musicCharacter)
+        formData.append('musicCharacter', this.musicForm.musicCharacter.toString())
         formData.append('musicTime', this.musicForm.musicTime)
         formData.append('authorKnownDegree', this.musicForm.authorKnownDegree)
-        formData.append('authorCountry', this.musicForm.authorCountry)
-        formData.append('authorName', this.musicForm.authorName)
+        formData.append('authorCountryId', this.musicForm.authorCountryId)
+        formData.append('authorNameId', this.musicForm.authorNameId)
         formData.append('file', this.file)
         insertMusic(formData).then(res => {
           const code = res.code
@@ -387,14 +592,14 @@ export default {
         }
       })
     },
-    deleteMusic($index) {
+    deleteMusic($index, row) {
       this.$confirm('确定删除此条数据?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        const user = this.users[$index]
-        deleteMusic(user).then(res => {
+        const param = { id: row.id }
+        deleteMusic(param).then(res => {
           const code = res.code
           const msg = res.msg
           if (code !== 1) {

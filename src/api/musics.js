@@ -37,8 +37,8 @@ export function updateMusic(params) {
 export function deleteMusic(params) {
   return request({
     url: '/music_socre/delete',
-    method: 'post',
-    data: params,
+    method: 'get',
+    params: params,
     timeout: 5000
   })
 }
