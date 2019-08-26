@@ -3,58 +3,35 @@
     <div class="head filter-container">
       <el-form :inline="true" :model="filters">
         <el-form-item >
-          <el-input size="mini" v-model="filters.deviceName" placeholder="设备名称" @keyup.enter.native="getDevicesBefore"></el-input>
+          <el-input size="mini" v-model="filters.musicName" placeholder="乐谱名称" @keyup.enter.native="getMusics"></el-input>
           </el-form-item>
+          <el-select size="mini" v-model="filters.authorCountryId"  placeholder="作者国家" filterable style="padding-right:15px;padding-top:5px">
+            <el-option v-for="item in authorCountrys" :key="item.authorCountryId" :label="item.authorCountry" :value="item.authorCountryId"></el-option>
+          </el-select>
+          <el-select size="mini" v-model="filters.authorNameId" placeholder="作者姓名" filterable style="padding-right:15px;padding-top:5px">
+            <el-option v-for="item in authorNames" :key="item.authorNameId" :label="item.authorName" :value="item.authorNameId"></el-option>
+          </el-select>
+          <el-select v-show="moreConditions" size="mini" v-model="filters.authorKnownDegree" placeholder="作者知名程度" style="padding-right:15px;padding-top:5px">
+            <el-option v-for="item in authorKnownDegrees" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+          <el-select v-show="moreConditions" size="mini" v-model="filters.musicScope" placeholder="考级范围" style="padding-right:15px;padding-top:5px">
+            <el-option v-for="item in musicScopes" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+          <el-select v-show="moreConditions" size="mini" v-model="filters.musicType" placeholder="曲子类型" style="padding-right:15px;padding-top:5px">
+            <el-option v-for="item in musicTypes" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+          <el-select  v-show="moreConditions" size="mini" v-model="filters.hands" placeholder="弹奏方式"  style="padding-right:15px;padding-top:5px">
+            <el-option v-for="item in hands" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+          <el-select v-show="moreConditions" size="mini" v-model="filters.musicTime"  placeholder="乐谱时期" style="padding-right:15px;padding-top:5px">
+            <el-option v-for="item in musicTimes" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+          <el-select v-show="moreConditions" size="mini" v-model="filters.musicCharacter" placeholder="曲子特性" 
+              multiple :multiple-limit="selectLimit" style="padding-right:15px;padding-top:5px;width:30%;">
+            <el-option v-for="item in musicCharacters" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
           <el-form-item>
-            <el-input size="mini" v-model="filters.ip" placeholder="IP" @keyup.enter.native="getDevicesBefore"></el-input>
-          </el-form-item>
-          <el-select size="mini" v-model="filters.deviceTypeValue" placeholder="设备类型" style="padding-right:5px;padding-top:5px">
-            <el-option v-for="item in deviceType" :key="item.value" :label="item.label" :value="item.value"></el-option>
-          </el-select>
-          <el-select size="mini" v-model="filters.statusValue" placeholder="设备状态" style="padding-right:5px;padding-top:5px">
-            <el-option v-for="item in statusType" :key="item.value" :label="item.label" :value="item.value"></el-option>
-          </el-select>
-          <el-form-item  v-show="moreConditions">
-            <el-input size="mini" v-model="filters.cvideogbid" placeholder="国标ID" @keyup.enter.native="getDevicesBefore" ></el-input>
-          </el-form-item>
-          <el-select  v-show="moreConditions" size="mini" v-model="filters.factoryId" placeholder="厂商"  style="padding-right:5px;padding-top:5px">
-            <el-option v-for="item in factorys" :key="item.id" :label="item.factoryName" :value="item.id"></el-option>
-          </el-select>
-          <el-select  v-show="moreConditions" size="mini" v-model="filters.industryId" placeholder="行业编码"  style="padding-right:5px;padding-top:5px">
-            <el-option v-for="item in industrys" :key="item.id" :label="item.industryName" :value="item.id"></el-option>
-          </el-select>
-          <el-select  v-show="moreConditions" size="mini" v-model="filters.zoneId" placeholder="地区编码"  style="padding-right:5px;padding-top:5px">
-            <el-option v-for="item in zones" :key="item.id" :label="item.zoneName" :value="item.id"></el-option>
-          </el-select>
-          <el-select  v-show="moreConditions" size="mini" v-model="filters.levelType" placeholder="设备等级"  style="padding-right:5px;padding-top:5px">
-            <el-option v-for="item in levelTypeSel2" :key="item.value" :label="item.label" :value="item.value"></el-option>
-          </el-select>
-          <el-select v-show="moreConditions" size="mini" v-model="filters.protocolType" placeholder="协议类型" style="padding-right:5px;padding-top:5px">
-            <el-option v-for="item in protocolTypeSel2" :key="item.value" :label="item.label" :value="item.value"></el-option>
-          </el-select>
-          <el-select v-show="moreConditions" size="mini" v-model="filters.netType"  placeholder="网络类型" style="padding-right:5px;padding-top:5px">
-            <el-option v-for="item in netTypeTypeSel2" :key="item.value" :label="item.label" :value="item.value"></el-option>
-          </el-select>
-          <el-select v-show="moreConditions" size="mini" v-model="filters.streamType" placeholder="取流类型" style="padding-right:5px;padding-top:5px">
-            <el-option v-for="item in streamTypeSel2" :key="item.value" :label="item.label" :value="item.value"></el-option>
-          </el-select>
-          <el-select v-show="moreConditions" size="mini" v-model="filters.streamProtocol"  placeholder="码流类型" style="padding-right:5px;padding-top:5px">
-            <el-option v-for="item in streamProtocolSel2" :key="item.value" :label="item.label" :value="item.value"></el-option>
-          </el-select>
-          <el-select v-show="moreConditions" size="mini" v-model="filters.mediaType" placeholder="媒体类型" style="padding-right:5px;padding-top:5px">
-            <el-option v-for="item in mediaTypeSel2" :key="item.value" :label="item.label" :value="item.value"></el-option>
-          </el-select>
-          <el-select v-show="moreConditions" size="mini" v-model="filters.autoRec" placeholder="是否自动录像" style="padding-right:5px;padding-top:5px">
-            <el-option v-for="item in isAutoRec" :key="item.value" :label="item.label" :value="item.value"></el-option>
-          </el-select>
-          <el-select v-show="moreConditions" size="mini" v-model="filters.cloudControl" placeholder="是否有云台" style="padding-right:5px;padding-top:5px">
-          <el-option v-for="item in isCloudControl" :key="item.value" :label="item.label" :value="item.value"></el-option>
-          </el-select>
-          <el-select v-show="moreConditions" size="mini" v-model="filters.cutflag" placeholder="是否自动截图" style="padding-right:5px;padding-top:5px">
-            <el-option v-for="item in isCutflag" :key="item.value" :label="item.label" :value="item.value"></el-option>
-          </el-select>     
-          <el-form-item>
-          <el-button size="mini" type="primary" @click="getDevicesBefore" icon="el-icon-search">搜索</el-button>
+          <el-button size="mini" type="primary" @click="getMusics" icon="el-icon-search">搜索</el-button>
           </el-form-item>
           <el-form-item>
           <el-button size="mini"  @click="initQuery">重置</el-button>
@@ -108,6 +85,7 @@
             <div>
               <!-- <el-button type="primary" size="small" @click="showUpdateDialog(scope.$index)">修改</el-button> -->
               <el-button type="danger" size="small" @click="deleteMusic(scope.$index, scope.row)">删除</el-button>
+              <el-button type="primary" size="small" @click="download(scope.$index, scope.row)">下载</el-button>
             </div>
           </template>
         </el-table-column>
@@ -235,7 +213,15 @@ export default {
       currentPage: 1,
 
       filters: {
-        username: ''
+        musicName: '',
+        musicScope: '',
+        musicType: '',
+        hands: '',
+        musicCharacter: [],
+        musicTime: '',
+        authorKnownDegree: '',
+        authorCountryId: '',
+        authorNameId: ''
       },
 
       // dialog
@@ -258,7 +244,8 @@ export default {
         authorKnownDegree: '',
         authorCountryId: '',
         authorNameId: '',
-        filePath: ''
+        filePath: '',
+        uuid: ''
       },
       selectLimit: 10,
 
@@ -467,13 +454,34 @@ export default {
       this.moreConditions = false
       this.lessConditions = true
     },
+    initQuery() {
+      this.filters.musicName = ''
+      this.filters.musicScope = ''
+      this.filters.musicType = ''
+      this.filters.hands = ''
+      this.filters.musicCharacter = []
+      this.filters.musicTime = ''
+      this.filters.authorKnownDegree = ''
+      this.filters.authorCountryId = ''
+      this.filters.authorNameId = ''
+      this.getMusics()
+    },
     httpRequest(item) {
       this.file = item.file
     },
     getMusics() {
       const params = {
         page: this.page,
-        size: this.pageSize
+        size: this.pageSize,
+        musicName: this.filters.musicName,
+        musicScope: this.filters.musicScope,
+        musicType: this.filters.musicType,
+        hands: this.filters.hands,
+        musicCharacter: this.filters.musicCharacter.toString(),
+        musicTime: this.filters.musicTime,
+        authorKnownDegree: this.filters.authorKnownDegree,
+        authorCountryId: this.filters.authorCountryId,
+        authorNameId: this.filters.authorNameId
         // date: new Date().getTime()
       }
       getMusics(params).then(res => {
@@ -522,10 +530,10 @@ export default {
       this.musicForm.authorNameId = 1
       this.musicForm.filePath = ''
       this.dialogType = 'insert'
+      this.fileList = []
       this.showDialog = true
     },
     insertMusic() {
-      console.log('--------->' + this.musicForm.musicCharacter.toString())
       this.$refs.musicForm.validate((valid) => {
         const formData = new FormData()
         formData.append('musicName', this.musicForm.musicName)
@@ -616,6 +624,9 @@ export default {
           }
         })
       })
+    },
+    download($index, row) {
+      window.open('http://' + window.location.hostname + ':9110/data/' + row.uuid + '.pdf')
     },
     // 修改table样式
     tableRowStyle({ row, rowIndex }) {
