@@ -306,7 +306,18 @@ export default {
         { label: '快速', value: 'i' },
         { label: '慢速', value: 'j' },
         { label: '中速', value: 'k' },
-        { label: '双手交替', value: 'l' }
+        { label: '双手交替', value: 'l' },
+        { label: '四拍子', value: 'm' },
+        { label: '三拍子', value: 'n' },
+        { label: '混合拍子', value: 'o' },
+        { label: '多声部', value: 'p' },
+        { label: '复杂节奏型', value: 'q' },
+        { label: '保留音', value: 'r' },
+        { label: '十六分音符', value: 's' },
+        { label: '同音替换', value: 't' },
+        { label: '颤音', value: 'u' },
+        { label: '落提', value: 'v' }
+
       ],
       musicTimes: [
         { label: '请选择', value: 0 },
@@ -436,6 +447,36 @@ export default {
       }
       if (character.indexOf('l') >= 0) {
         returnData = returnData + '双手交替'
+      }
+      if (character.indexOf('m') >= 0) {
+        returnData = returnData + '四拍子'
+      }
+      if (character.indexOf('n') >= 0) {
+        returnData = returnData + '三拍子'
+      }
+      if (character.indexOf('o') >= 0) {
+        returnData = returnData + '混合拍子'
+      }
+      if (character.indexOf('p') >= 0) {
+        returnData = returnData + '多声部'
+      }
+      if (character.indexOf('q') >= 0) {
+        returnData = returnData + '复杂节奏型'
+      }
+      if (character.indexOf('r') >= 0) {
+        returnData = returnData + '保留音'
+      }
+      if (character.indexOf('s') >= 0) {
+        returnData = returnData + '十六分音符'
+      }
+      if (character.indexOf('t') >= 0) {
+        returnData = returnData + '同音替换'
+      }
+      if (character.indexOf('u') >= 0) {
+        returnData = returnData + '颤音'
+      }
+      if (character.indexOf('v') >= 0) {
+        returnData = returnData + '落提'
       }
       return returnData
     }
